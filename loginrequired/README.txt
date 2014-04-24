@@ -1,6 +1,6 @@
 Elgg Loginrequired plugin
-Latest Version: 1.8.3
-Released: 2012-05-25
+Latest Version: 1.8.4
+Released: 2014-04-24
 Contact: iionly@gmx.de
 License: GNU General Public License version 2
 Copyright: (c) iionly, Khaled Afiouni
@@ -37,6 +37,12 @@ If you want to change the layout of the login page look at the file loginrequire
 
 
 Changelog:
+
+1.8.4:
+
+- Added "/login" page to allowed pages to avoid a possible redirect loop,
+- Code cleanup.
+
 
 1.8.3:
 
