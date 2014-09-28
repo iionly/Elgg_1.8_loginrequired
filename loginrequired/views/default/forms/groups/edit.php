@@ -1,7 +1,7 @@
 <?php
 /**
  * Group edit form
- * 
+ *
  * @package ElggGroups
  */
 
@@ -57,7 +57,7 @@ if ($group_profile_fields > 0) {
 		?>
 	</label>
 </div>
-	
+
 <?php
 
 if (elgg_get_plugin_setting('hidden_groups', 'groups') == 'yes') {
@@ -79,7 +79,7 @@ if (elgg_get_plugin_setting('hidden_groups', 'groups') == 'yes') {
 	</label>
 </div>
 
-<?php 	
+<?php
 }
 
 if (isset($vars['entity'])) {
@@ -124,7 +124,7 @@ if ($entity && ($owner_guid == elgg_get_logged_in_user_guid() || elgg_is_admin_l
 	?>
 </div>
 
-<?php 	
+<?php
 }
 
 $tools = elgg_get_config('group_tool_options');

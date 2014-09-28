@@ -12,14 +12,18 @@
  * Upgraded to Elgg 1.8 by iionly, (c) iionly 2011-2014
  */
 
-
 elgg_register_event_handler('init','system','loginrequired_init');
 
 function loginrequired_init() {
 
+	global $CONFIG;
+
+	elgg_extend_view('css/elgg', 'loginrequired/css');
+
 	if ($CONFIG->default_access == ACCESS_PUBLIC) {
 		$CONFIG->default_access = ACCESS_LOGGED_IN;
 	}
+
 	elgg_register_plugin_hook_handler('access:collections:write', 'all', 'loginrequired_remove_public_access', 9999);
 
 	// No need to do all the checking below if the user is already logged in... performance is key :)
@@ -27,13 +31,11 @@ function loginrequired_init() {
 		return;
 	}
 
-	elgg_extend_view('css/elgg', 'loginrequired/css');
-
 	elgg_unextend_view('page/elements/header', 'search/header');
 
-	elgg_register_plugin_hook_handler('index','system','loginrequired_index', 1);
+	elgg_register_plugin_hook_handler('index', 'system', 'loginrequired_index', 1);
 
-	elgg_register_plugin_hook_handler('login_required','login_required', 'login_required_default_allowed_list');
+	elgg_register_plugin_hook_handler('login_required', 'login_required', 'login_required_default_allowed_list');
 
 	// Get the current page URL without any ? & parameters... this is required for the registration page to work properly
 	$current_url = current_page_url();
@@ -50,6 +52,7 @@ function loginrequired_init() {
 	$allow = array();
 	// Allow should have pages
 	$allow[] = '_graphics';
+	$allow[] = 'walled_garden/.*';
 	$allow[] = 'login';
 	$allow[] = 'action/login';
 	$allow[] = 'register';
@@ -67,6 +70,8 @@ function loginrequired_init() {
 	$allow[] = 'js/.*';
 	$allow[] = 'cache/css/.*';
 	$allow[] = 'cache/js/.*';
+	$allow[] = 'cron/.*';
+	$allow[] = 'services/.*';
 
 	// Allow other plugin developers to edit the array values
 	$add_allow = elgg_trigger_plugin_hook('login_required','login_required');
@@ -77,7 +82,7 @@ function loginrequired_init() {
 	}
 
 	// Any public_pages defined via Elgg's walled garden plugin hook?
-	$plugins = elgg_trigger_plugin_hook('public_pages', 'walled_garden', NULL, array());
+	$plugins = elgg_trigger_plugin_hook('public_pages', 'walled_garden', null, array());
 
 	// If more URL's are added... merge both with original list
 	if (is_array($plugins)) {
@@ -96,10 +101,16 @@ function loginrequired_init() {
 }
 
 // Add more allowed URL's...
-function login_required_default_allowed_list($hook, $type, $returnvalue, $params) {
+function login_required_default_allowed_list($hook, $type, $return, $params) {
 
-	// If externalpages plugin is active allow access to its pages
-	$add = array();
+	if (is_array($return)) {
+		$add = $return;
+	} else {
+		$add = array();
+	}
+
+	// Example: here the pages for the externalpages plugin are added to allow access to its pages
+	// Other pages can be added likewise
 	$add[] = 'terms';
 	$add[] = 'privacy';
 	$add[] = 'about';
@@ -107,7 +118,7 @@ function login_required_default_allowed_list($hook, $type, $returnvalue, $params
 	return $add;
 }
 
-function loginrequired_index($hook, $type, $returnvalue, $params) {
+function loginrequired_index($hook, $type, $return, $params) {
 
 	if ($return == true) {
 		// another hook has already replaced the front page
